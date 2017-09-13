@@ -46,6 +46,18 @@ export default {
         resolve(true);
       });
     });
+  },
+
+  cancelAuthentication() {
+    return new Promise((resolve) => {
+      NativeTouchID.cancelAuthentication(error => {
+        if (error) {
+          return reject(createError(error.message));
+        }
+
+        resolve();
+      });
+    });
   }
 };
 

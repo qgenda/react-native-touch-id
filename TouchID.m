@@ -4,6 +4,8 @@
 
 @implementation TouchID
 
+static LAContext *context;
+
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(isSupported: (RCTResponseSenderBlock)callback)
@@ -23,7 +25,10 @@ RCT_EXPORT_METHOD(isSupported: (RCTResponseSenderBlock)callback)
 RCT_EXPORT_METHOD(authenticate: (NSString *)reason
                       callback: (RCTResponseSenderBlock)callback)
 {
-    LAContext *context = [[LAContext alloc] init];
+    // Automatically invalidate any existing LAContext.  The previous callbacks will be called with error LAErrorAppCancel
+    [context invalidate];
+
+    context = [[LAContext alloc] init];
     NSError *error;
 
     // Device has TouchID
@@ -52,6 +57,10 @@ RCT_EXPORT_METHOD(authenticate: (NSString *)reason
 
                      case LAErrorSystemCancel:
                          errorReason = @"LAErrorSystemCancel";
+                         break;
+
+                     case LAErrorAppCancel:
+                         errorReason = @"LAErrorAppCancel";
                          break;
 
                      case LAErrorPasscodeNotSet:
@@ -85,6 +94,12 @@ RCT_EXPORT_METHOD(authenticate: (NSString *)reason
         callback(@[RCTMakeError(@"RCTTouchIDNotSupported", nil, nil)]);
         return;
     }
+}
+
+RCT_EXPORT_METHOD(cancelAuthentication: (RCTResponseSenderBlock)callback)
+{
+    [context invalidate];
+    callback(@[[NSNull null]]);
 }
 
 @end
