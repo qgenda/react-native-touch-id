@@ -29,7 +29,7 @@ export default {
     return new Promise((resolve, reject) => {
       NativeTouchID.isSupported((error, isSupported, biometricAuthenticationType) => {
         if (error) {
-          return reject('None');
+          return resolve('None');
         }
 
         resolve(biometricAuthenticationType);
