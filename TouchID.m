@@ -2,6 +2,10 @@
 #import <React/RCTUtils.h>
 #import <LocalAuthentication/LocalAuthentication.h>
 
+NSString *const kTouchIDBiometricAuthenticationTypeNone = @"None";
+NSString *const kTouchIDBiometricAuthenticationTypeFingerprint = @"Fingerprint";
+NSString *const kTouchIDBiometricAuthenticationTypeFacialRecognition = @"FacialRecognition";
+
 @implementation TouchID
 
 static LAContext *context;
@@ -14,7 +18,22 @@ RCT_EXPORT_METHOD(isSupported: (RCTResponseSenderBlock)callback)
     NSError *error;
 
     if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
-        callback(@[[NSNull null], @true]);
+        // Default the authentication type to TouchID for devices < iOS 11.0.  If TouchID is not supported or enrolled
+        //   then canEvaluatePolicy will return false.
+        NSString *biometricAuthenticationType = kTouchIDBiometricAuthenticationTypeFingerprint;
+
+        if([context respondsToSelector:@selector(biometryType)]) {
+            switch(context.biometryType) {
+                case LABiometryTypeTouchID:
+                    biometricAuthenticationType = kTouchIDBiometricAuthenticationTypeFingerprint;
+                    break;
+                case LABiometryTypeFaceID:
+                    biometricAuthenticationType = kTouchIDBiometricAuthenticationTypeFacialRecognition;
+                    break;
+            }
+        }
+
+        callback(@[[NSNull null], @true, biometricAuthenticationType]);
         // Device does not support TouchID
     } else {
         callback(@[RCTMakeError(@"RCTTouchIDNotSupported", nil, nil)]);
