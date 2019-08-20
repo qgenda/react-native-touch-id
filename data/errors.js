@@ -8,9 +8,6 @@ module.exports = {
   LAErrorAppCancel: {
     message: 'Authentication was canceled by the application.'
   },
-  LAErrorAppCancel: {
-    message: 'Authentication was canceled by the application.'
-  },
   LAErrorUserFallback: {
     message: 'Authentication was canceled because the user tapped the fallback button (Enter Password).'
   },
