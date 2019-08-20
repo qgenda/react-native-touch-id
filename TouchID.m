@@ -14,7 +14,10 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(isSupported: (RCTResponseSenderBlock)callback)
 {
-    LAContext *context = [[LAContext alloc] init];
+    // Automatically invalidate any existing LAContext.  The previous callbacks will be called with error LAErrorAppCancel
+    [context invalidate];
+
+    context = [[LAContext alloc] init];
     NSError *error;
 
     if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
