@@ -85,10 +85,6 @@ RCT_EXPORT_METHOD(authenticate: (NSString *)reason
                          errorReason = @"LAErrorAppCancel";
                          break;
 
-                     case LAErrorAppCancel:
-                         errorReason = @"LAErrorAppCancel";
-                         break;
-
                      case LAErrorPasscodeNotSet:
                          errorReason = @"LAErrorPasscodeNotSet";
                          break;
